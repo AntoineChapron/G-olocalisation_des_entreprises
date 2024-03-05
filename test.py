@@ -64,7 +64,7 @@ def batiments_risque(numero_siren,risque_phys):
     folium.LayerControl().add_to(risque)
  
     # URL de téléchargement du fichier HDF5 sur GitHub (vous pouvez le remplacer par le chemin local après le téléchargement)
-     url_hdf5 = 'https://github.com/AntoineChapron/G-olocalisation_des_entreprises/releases/download/geoloc/geoloc_etabli_siren.h5'
+    url_hdf5 = 'https://github.com/AntoineChapron/G-olocalisation_des_entreprises/releases/download/geoloc/geoloc_etabli_siren.h5'
 
     # Téléchargez le fichier HDF5 localement
     filename_hdf5 = 'geoloc_etabli_siren.h5'
