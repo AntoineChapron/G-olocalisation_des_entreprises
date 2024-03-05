@@ -23,7 +23,7 @@ st.write("""
 #data_frame_entier['siren'] = data_frame_entier['siret'].apply(lambda x: str(x)[:9])
 #data_frame_entier = data_frame_entier[['siret','y_latitude','x_longitude','siren','plg_code_commune']]
 #st.write(data_frame_entier)
-df_lien = pd.read_csv('C:/Users/antoine.chapron_adwa/Documents/geoloc_sites/df_lien.csv', sep=',')
+df_lien = pd.read_csv('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/releases/download/df_lien.csv/df_lien.csv', sep=',')
 
 
 state_geo = requests.get(
