@@ -91,7 +91,7 @@ def batiments_risque(numero_siren,risque_phys):
     for index, row in resultat_used.iterrows():
         folium.Circle([row['y_latitude'], row['x_longitude']], popup = row['lib_commune']).add_to(risque)
 
-    jointure = pd.read_csv('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/blob/main/jointure.csv',sep=',')
+    jointure = pd.read_csv('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/releases/download/jointure.csv/jointure.csv',sep=',')
 
     moy_used = pd.merge(data_used, jointure, left_on='plg_code_commune',right_on='cod_commune', how='inner')
 
