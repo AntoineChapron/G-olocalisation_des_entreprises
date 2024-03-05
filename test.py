@@ -24,8 +24,7 @@ st.write("""
 #data_frame_entier = data_frame_entier[['siret','y_latitude','x_longitude','siren','plg_code_commune']]
 #st.write(data_frame_entier)
 df_lien = pd.read_csv('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/releases/download/df_lien.csv/df_lien.csv', sep=',')
-df_lien2 = df_lien.head(10)
-st.write(df_lien2)
+
 state_geo = requests.get(
     "https://static.data.gouv.fr/resources/contours-des-communes-de-france-simplifie-avec-regions-et-departement-doutre-mer-rapproches/20220219-095144/a-com2022.json"
 ).json()
