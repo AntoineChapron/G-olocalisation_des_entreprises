@@ -35,15 +35,15 @@ def batiments_risque(numero_siren,risque_phys):
     risque = folium.Map(location=[46.603354, 1.888334], zoom_start=6)
 
     if risque_phys == "Inondation":
-        communes_jointure = pd.read_csv('C:/Users/antoine.chapron_adwa/Documents/geoloc_sites/communes_jointure_inon.csv', sep=',', low_memory=False)
+        communes_jointure = pd.read_csv('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/blob/main/communes_jointure_inon.csv', sep=',', low_memory=False)
     elif risque_phys == "Séisme":
-        communes_jointure = pd.read_csv('C:/Users/antoine.chapron_adwa/Documents/geoloc_sites/communes_jointure_seis.csv', sep=',', low_memory=False)
+        communes_jointure = pd.read_csv('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/blob/main/communes_jointure_seis.csv', sep=',', low_memory=False)
     elif risque_phys == "Mouvement de terrain":
-        communes_jointure = pd.read_csv('C:/Users/antoine.chapron_adwa/Documents/geoloc_sites/communes_jointure_mouv.csv', sep=',', low_memory=False)
+        communes_jointure = pd.read_csv('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/blob/main/communes_jointure_mouv.csv', sep=',', low_memory=False)
     elif risque_phys == "Sécheresse":
-        communes_jointure = pd.read_csv('C:/Users/antoine.chapron_adwa/Documents/geoloc_sites/communes_jointure_sech.csv', sep=',', low_memory=False)
+        communes_jointure = pd.read_csv('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/blob/main/communes_jointure_sech.csv', sep=',', low_memory=False)
     elif risque_phys == "Tempête":
-        communes_jointure = pd.read_csv('C:/Users/antoine.chapron_adwa/Documents/geoloc_sites/communes_jointure_temp.csv', sep=',', low_memory=False)
+        communes_jointure = pd.read_csv('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/blob/main/communes_jointure_temp.csv', sep=',', low_memory=False)
     else:
         raise ValueError("Le paramètre risque_phys doit être 'inon','seis','mouv','sech' ou 'temp'.")
 
