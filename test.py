@@ -7,7 +7,7 @@ import pandas as pd
 from streamlit_folium import st_folium
 from streamlit_folium import folium_static
 #from chargement import load_large_dataset
-
+import urllib.request
  
 st.write("""
 # Géolocalisation des bâtiments des entreprises
