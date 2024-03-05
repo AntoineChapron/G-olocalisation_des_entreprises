@@ -63,7 +63,7 @@ def batiments_risque(numero_siren,risque_phys):
 
     folium.LayerControl().add_to(risque)
     
-    data_used = pd.read_hdf('C:/Users/antoine.chapron_adwa/Documents/geoloc_sites/geoloc_etabli_siren.h5', 'results_table', where=['siren = "{}"'.format(numero_siren)])
+    data_used = pd.read_hdf('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/releases/download/geoloc/geoloc_etabli_siren.h5', 'results_table', where=['siren = "{}"'.format(numero_siren)])
     data_used['plg_code_commune'] = data_used['plg_code_commune'].astype(str)
 
     data_used = pd.merge(data_used, df_lien, on="siret", how="inner" )
