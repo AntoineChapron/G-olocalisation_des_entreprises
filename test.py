@@ -62,8 +62,19 @@ def batiments_risque(numero_siren,risque_phys):
         ).add_to(risque)
 
     folium.LayerControl().add_to(risque)
-    
-    data_used = pd.read_hdf('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/releases/download/geoloc/geoloc_etabli_siren.h5', 'results_table', where=['siren = "{}"'.format(numero_siren)])
+ 
+    # URL de téléchargement du fichier HDF5 sur GitHub (vous pouvez le remplacer par le chemin local après le téléchargement)
+     url_hdf5 = 'https://github.com/AntoineChapron/G-olocalisation_des_entreprises/releases/download/geoloc/geoloc_etabli_siren.h5'
+
+    # Téléchargez le fichier HDF5 localement
+    filename_hdf5 = 'geoloc_etabli_siren.h5'
+    st.write("Téléchargement du fichier HDF5...")
+    with st.spinner('Téléchargement en cours...'):
+        urllib.request.urlretrieve(url_hdf5, filename_hdf5)
+
+    # Lisez le fichier HDF5
+    data_used = pd.read_hdf(filename_hdf5, 'results_table', where=['siren = "{}"'.format(numero_siren)])
+    #data_used = pd.read_hdf('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/releases/download/geoloc/geoloc_etabli_siren.h5', 'results_table', where=['siren = "{}"'.format(numero_siren)])
     data_used['plg_code_commune'] = data_used['plg_code_commune'].astype(str)
 
     data_used = pd.merge(data_used, df_lien, on="siret", how="inner" )
