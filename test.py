@@ -83,16 +83,16 @@ if type == "Particulier" :
                 st.error("Adresse non trouvée. Veuillez vérifier votre saisie.")
         else:
               st.warning("Veuillez saisir une adresse.")
-            
+
+    risque_phys = st.selectbox("Sélection du risque:", ["Inondation", "Mouvement de terrain", "Sécheresse","Séisme",'Tempête'])
+    
+    address = st.text_input("Adresse postale :")
+
     moyenne_fin, risque = location_risque(address, risque_phys)
     st.write("### Risque")
     st.write(moyenne_fin)
     st.write("## Carte interactive")
     folium_static(risque)
-
-    risque_phys = st.selectbox("Sélection du risque:", ["Inondation", "Mouvement de terrain", "Sécheresse","Séisme",'Tempête'])
-    
-    address = st.text_input("Adresse postale :")
     
     if st.button("Submit"):
         location_risque(address,risque_phys)
