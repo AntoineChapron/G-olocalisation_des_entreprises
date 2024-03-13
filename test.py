@@ -29,7 +29,7 @@ state_geo = requests.get(
     "https://static.data.gouv.fr/resources/contours-des-communes-de-france-simplifie-avec-regions-et-departement-doutre-mer-rapproches/20220219-095144/a-com2022.json"
 ).json()
 
-@st.cache_data
+@st.cache
 def batiments_risque(numero_siren,risque_phys):
     risque = folium.Map(location=[46.603354, 1.888334], zoom_start=6)
 
