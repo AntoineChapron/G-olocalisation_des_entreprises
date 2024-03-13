@@ -78,12 +78,17 @@ if type == "Particulier" :
 
                  # Affichage de la carte Folium
                   folium.Circle(location, popup=address).add_to(risque)
-                  return(st.write("### Risque"),st.write(moyenne_fin),st.write("## Carte interactive"),folium_static(risque))
+                  return(moyenne_fin,risque)
             else:
                 st.error("Adresse non trouvée. Veuillez vérifier votre saisie.")
         else:
               st.warning("Veuillez saisir une adresse.")
-    
+            
+    moyenne_fin, risque = location_risque(address, risque_phys)
+    st.write("### Risque")
+    st.write(moyenne_fin)
+    st.write("## Carte interactive")
+    folium_static(risque)
 
     risque_phys = st.selectbox("Sélection du risque:", ["Inondation", "Mouvement de terrain", "Sécheresse","Séisme",'Tempête'])
     
