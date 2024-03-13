@@ -88,14 +88,14 @@ if type == "Particulier" :
     
     address = st.text_input("Adresse postale :")
 
-    moyenne_fin, risque = location_risque(address, risque_phys)
-    st.write("### Risque")
-    st.write(moyenne_fin)
-    st.write("## Carte interactive")
-    folium_static(risque)
+    
     
     if st.button("Submit"):
-        location_risque(address,risque_phys)
+        moyenne_fin, risque = location_risque(address, risque_phys)
+        st.write("### Risque")
+        st.write(moyenne_fin)
+        st.write("## Carte interactive")
+        folium_static(risque)
     
     
     
