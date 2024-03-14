@@ -33,6 +33,7 @@ df_lien = get_df_lien()
 #    "https://static.data.gouv.fr/resources/contours-des-communes-de-france-simplifie-avec-regions-et-departement-doutre-mer-rapproches/20220219-095144/a-com2022.json"
 #).json()
 
+
 type = st.selectbox("Type :", ["Particulier","Entreprise"])
 
 if type == "Particulier" : 
@@ -114,6 +115,20 @@ if type == "Particulier" :
     
     
 else :
+    @st.cache_data
+    def download_hdf5_file():
+        # URL de téléchargement du fichier HDF5 sur GitHub (vous pouvez le remplacer par le chemin local après le téléchargement)
+        url_hdf5 = 'https://github.com/AntoineChapron/G-olocalisation_des_entreprises/releases/download/geoloc/geoloc_etabli_siren.h5'
+
+        # Téléchargez le fichier HDF5 localement
+        filename_hdf5 = 'geoloc_etabli_siren.h5'
+        st.write("Téléchargement du fichier HDF5...")
+        with st.spinner('Téléchargement en cours...'):
+            urllib.request.urlretrieve(url_hdf5, filename_hdf5)
+        return filename_hdf5
+
+    filename_hdf5 = download_hdf5_file()
+
     def batiments_risque(numero_siren,risque_phys):
         risque = folium.Map(location=[46.603354, 1.888334], zoom_start=6)
 
@@ -147,13 +162,13 @@ else :
         folium.LayerControl().add_to(risque)
  
         # URL de téléchargement du fichier HDF5 sur GitHub (vous pouvez le remplacer par le chemin local après le téléchargement)
-        url_hdf5 = 'https://github.com/AntoineChapron/G-olocalisation_des_entreprises/releases/download/geoloc/geoloc_etabli_siren.h5'
+        #url_hdf5 = 'https://github.com/AntoineChapron/G-olocalisation_des_entreprises/releases/download/geoloc/geoloc_etabli_siren.h5'
 
         # Téléchargez le fichier HDF5 localement
-        filename_hdf5 = 'geoloc_etabli_siren.h5'
-        st.write("Téléchargement du fichier HDF5...")
-        with st.spinner('Téléchargement en cours...'):
-            urllib.request.urlretrieve(url_hdf5, filename_hdf5)
+        #filename_hdf5 = 'geoloc_etabli_siren.h5'
+        #st.write("Téléchargement du fichier HDF5...")
+        #with st.spinner('Téléchargement en cours...'):
+        #    urllib.request.urlretrieve(url_hdf5, filename_hdf5)
 
         # Lisez le fichier HDF5
         data_used = pd.read_hdf(filename_hdf5, 'results_table', where=['siren = "{}"'.format(numero_siren)])
