@@ -23,7 +23,7 @@ type = st.selectbox("Type :", ["Particulier","Entreprise"])
 
 if type == "Particulier" : 
  
-    @st.cache(suppress_st_warning = True)
+    @st.cache_data
     def location_risque(address,risque_phys):
         
         risque = folium.Map(location=[46.603354, 1.888334], zoom_start=6)
