@@ -114,7 +114,6 @@ if type == "Particulier" :
     
     
 else :
-    @st.cache(suppress_st_warning = True)
     def batiments_risque(numero_siren,risque_phys):
         risque = folium.Map(location=[46.603354, 1.888334], zoom_start=6)
 
