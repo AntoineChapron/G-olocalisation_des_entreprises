@@ -5,6 +5,7 @@ import streamlit as st
 import pandas as pd
 from streamlit_folium import st_folium
 from streamlit_folium import folium_static
+from streamlit_folium import st_folium_map
 import urllib.request
 from geopy.geocoders import BANFrance
 
@@ -23,7 +24,7 @@ type = st.selectbox("Type :", ["Particulier","Entreprise"])
 
 if type == "Particulier" : 
  
-    @st.cache_data
+    @st.cache_data(hash_funcs={folium.Map: id})
     def location_risque(address,risque_phys):
         
         risque = folium.Map(location=[46.603354, 1.888334], zoom_start=6)
