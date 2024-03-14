@@ -13,17 +13,30 @@ st.write("""
 ## Fonds de cartes de risques physiques
 """)
 
+@st.cache_data
+def get_state_geo_data():
+    # Effectuer la requête HTTP pour obtenir les données JSON et les retourner
+    return requests.get("https://static.data.gouv.fr/resources/contours-des-communes-de-france-simplifie-avec-regions-et-departement-doutre-mer-rapproches/20220219-095144/a-com2022.json").json()
 
-df_lien = pd.read_csv('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/releases/download/df_lien.csv/df_lien.csv', sep=',')
+# Charger les données JSON une seule fois au démarrage de l'application
+state_geo = get_state_geo_data()
 
-state_geo = requests.get(
-    "https://static.data.gouv.fr/resources/contours-des-communes-de-france-simplifie-avec-regions-et-departement-doutre-mer-rapproches/20220219-095144/a-com2022.json"
-).json()
+
+@st.cache_data
+def get_df_lien():
+    return pd.read_csv('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/releases/download/df_lien.csv/df_lien.csv', sep=',')
+df_lien = get_df_lien()
+
+#df_lien = pd.read_csv('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/releases/download/df_lien.csv/df_lien.csv', sep=',')
+
+#state_geo = requests.get(
+#    "https://static.data.gouv.fr/resources/contours-des-communes-de-france-simplifie-avec-regions-et-departement-doutre-mer-rapproches/20220219-095144/a-com2022.json"
+#).json()
+
 type = st.selectbox("Type :", ["Particulier","Entreprise"])
 
 if type == "Particulier" : 
  
-    @st.cache_data(hash_funcs={folium.Map: id})
     def location_risque(address,risque_phys):
         
         risque = folium.Map(location=[46.603354, 1.888334], zoom_start=6)
