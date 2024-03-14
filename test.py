@@ -5,7 +5,6 @@ import streamlit as st
 import pandas as pd
 from streamlit_folium import st_folium
 from streamlit_folium import folium_static
-from streamlit_folium import st_folium_map
 import urllib.request
 from geopy.geocoders import BANFrance
 
