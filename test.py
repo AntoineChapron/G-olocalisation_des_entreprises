@@ -75,11 +75,11 @@ if type == "Particulier" :
             # Géocodage de l'adresse saisie
             geolocator = BANFrance(user_agent="monapplicartecalanguedoc")
             location = geolocator.geocode(address)
-            address_parts = location.address.split(' ')
+            com_loc = location.raw.get('properties', {}).get('city')
             location = location[1]
             jointure = pd.read_csv('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/jointure.csv',sep=',')
 
-            moyenne = jointure[jointure["lib_commune"] == address_parts[-1]]
+            moyenne = jointure[jointure["lib_commune"] == com_loc]
 
             moyenne_fin = [["Risque", "Inondation", "Mouvement de terrain", "Sécheresse", "Séisme", "Tempête"],
                 ["Moyenne /5", round(moyenne['classe_ris_inon'].mean(),2) , round(moyenne['classe_ris_mouv'].mean(),2), 
