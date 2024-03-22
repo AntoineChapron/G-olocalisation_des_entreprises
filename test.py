@@ -118,7 +118,7 @@ else :
     @st.cache_data
     def download_hdf5_file():
         # URL de téléchargement du fichier HDF5 sur GitHub (vous pouvez le remplacer par le chemin local après le téléchargement)
-        url_hdf5 = 'https://github.com/AntoineChapron/G-olocalisation_des_entreprises/releases/download/geoloc/geoloc_etabli_siren.h5'
+        url_hdf5 = 'https://github.com/AntoineChapron/G-olocalisation_des_entreprises/releases/download/geoloc_etabli_siren.h5/geoloc_etabli_siren.h5'
 
         # Téléchargez le fichier HDF5 localement
         filename_hdf5 = 'geoloc_etabli_siren.h5'
