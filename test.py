@@ -33,6 +33,10 @@ df_lien = get_df_lien()
 #    "https://static.data.gouv.fr/resources/contours-des-communes-de-france-simplifie-avec-regions-et-departement-doutre-mer-rapproches/20220219-095144/a-com2022.json"
 #).json()
 
+@st.cache_data
+def get_df_inon():
+    return pd.read_csv('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/communes_jointure_inon.csv', sep=',', low_memory=False)
+df_inon = get_df_inon()
 
 type = st.selectbox("Type :", ["Particulier","Entreprise"])
 
@@ -43,7 +47,8 @@ if type == "Particulier" :
         risque = folium.Map(location=[46.603354, 1.888334], zoom_start=6)
 
         if risque_phys == "Inondation":
-            communes_jointure = pd.read_csv('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/communes_jointure_inon.csv', sep=',', low_memory=False)
+            #communes_jointure = pd.read_csv('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/communes_jointure_inon.csv', sep=',', low_memory=False)
+            communes_jointure = df_inon
         elif risque_phys == "Séisme":
             communes_jointure = pd.read_csv('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/communes_jointure_seis.csv', sep=',', low_memory=False)
         elif risque_phys == "Mouvement de terrain":
@@ -65,7 +70,7 @@ if type == "Particulier" :
             key_on="feature.properties.codgeo",
             fill_color="Reds",
             fill_opacity=0.7,
-            line_opacity=0.2,
+            line_opacity=0,
             legend_name="Classes de risque",
             ).add_to(risque)
 
