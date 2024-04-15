@@ -9,3 +9,4 @@ Requests==2.31.0
 Shapely==2.0.3
 streamlit==1.31.1
 streamlit_folium==0.18.0
+tables==3.9.2
