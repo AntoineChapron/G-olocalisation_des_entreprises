@@ -37,10 +37,7 @@ df_lien = get_df_lien()
 #    "https://static.data.gouv.fr/resources/contours-des-communes-de-france-simplifie-avec-regions-et-departement-doutre-mer-rapproches/20220219-095144/a-com2022.json"
 #).json()
 
-@st.cache_data
-def get_df_inon():
-    return pd.read_csv('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/communes_jointure_inon.csv', sep=',', low_memory=False)
-df_inon = get_df_inon()
+
 
 type2 = st.selectbox("Souhaitez-vous afficher des cartes prédictives ? :", ["Oui","Non"])
 type = st.selectbox("Type :", ["Particulier","Entreprise"])
@@ -53,8 +50,7 @@ if type2 == "Non" :
             risque = folium.Map(location=[46.603354, 1.888334], zoom_start=6)
 
             if risque_phys == "Inondation":
-                #communes_jointure = pd.read_csv('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/communes_jointure_inon.csv', sep=',', low_memory=False)
-                communes_jointure = df_inon
+                communes_jointure = pd.read_csv('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/communes_jointure_inon.csv', sep=',', low_memory=False)
             elif risque_phys == "Séisme":
                 communes_jointure = pd.read_csv('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/communes_jointure_seis.csv', sep=',', low_memory=False)
             elif risque_phys == "Mouvement de terrain":
@@ -221,17 +217,17 @@ if type2 == "Oui" :
         def map_prev_inc(year, scenario, address):
             # Charger les données de la base de données
             if scenario == "Rcp 2.6 moyenne":
-                df_entier = pd.read_csv('C:/Users/antoine.chapron_adwa/Documents/geoloc_sites/final_bdd_inc_rcp26.csv', sep=',', low_memory=False)
+                df_entier = pd.read_csv('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/scenario_inc/final_bdd_inc_rcp26.csv', sep=',', low_memory=False)
             elif scenario == "Rcp 4.5 moyenne":
-                df_entier = pd.read_csv('C:/Users/antoine.chapron_adwa/Documents/geoloc_sites/final_bdd_inc_rcp45.csv', sep=',', low_memory=False)
+                df_entier = pd.read_csv('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/scenario_inc/final_bdd_inc_rcp45.csv', sep=',', low_memory=False)
             elif scenario == "Rcp 8.5 moyenne":
-                df_entier = pd.read_csv('C:/Users/antoine.chapron_adwa/Documents/geoloc_sites/final_bdd_inc_rcp85.csv', sep=',', low_memory=False)
+                df_entier = pd.read_csv('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/scenario_inc/final_bdd_inc_rcp85.csv', sep=',', low_memory=False)
             elif scenario == "Rcp 2.6 worst case":
-                df_entier = pd.read_csv('C:/Users/antoine.chapron_adwa/Documents/geoloc_sites/final_bdd_inc_rcp26wc.csv', sep=',', low_memory=False)
+                df_entier = pd.read_csv('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/scenario_inc/final_bdd_inc_rcp26wc.csv', sep=',', low_memory=False)
             elif scenario == "Rcp 4.5 worst case":
-                df_entier = pd.read_csv('C:/Users/antoine.chapron_adwa/Documents/geoloc_sites/final_bdd_inc_rcp45wc.csv', sep=',', low_memory=False)
+                df_entier = pd.read_csv('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/scenario_inc/final_bdd_inc_rcp45wc.csv', sep=',', low_memory=False)
             elif scenario == "Rcp 8.5 worst case":
-                df_entier = pd.read_csv('C:/Users/antoine.chapron_adwa/Documents/geoloc_sites/final_bdd_inc_rcp85wc.csv', sep=',', low_memory=False)
+                df_entier = pd.read_csv('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/scenario_inc/final_bdd_inc_rcp85wc.csv', sep=',', low_memory=False)
             else:
                 raise ValueError("Le paramètre risque_phys doit être 'inon','seis','mouv','sech' ou 'temp'.")
 
@@ -302,20 +298,34 @@ if type2 == "Oui" :
     
     
     if type == "Entreprise" : 
+        @st.cache_data
+        def download_hdf5_file():
+            # URL de téléchargement du fichier HDF5 sur GitHub (vous pouvez le remplacer par le chemin local après le téléchargement)
+            url_hdf5 = 'https://github.com/AntoineChapron/G-olocalisation_des_entreprises/releases/download/geoloc_etabli/geoloc_etabli_siren.h5'
+
+            # Téléchargez le fichier HDF5 localement
+            filename_hdf5 = 'geoloc_etabli_siren.h5'
+            st.write("Téléchargement du fichier HDF5...")
+            with st.spinner('Téléchargement en cours...'):
+                urllib.request.urlretrieve(url_hdf5, filename_hdf5)
+            return filename_hdf5
+
+        filename_hdf5 = download_hdf5_file()
+
         def map_prev_inc_ent(year, scenario, numero_siren):
             # Charger les données de la base de données
             if scenario == "Rcp 2.6 moyenne":
-                df_entier = pd.read_csv('C:/Users/antoine.chapron_adwa/Documents/geoloc_sites/final_bdd_inc_rcp26.csv', sep=',', low_memory=False)
+                df_entier = pd.read_csv('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/scenario_inc/final_bdd_inc_rcp26.csv', sep=',', low_memory=False)
             elif scenario == "Rcp 4.5 moyenne":
-                df_entier = pd.read_csv('C:/Users/antoine.chapron_adwa/Documents/geoloc_sites/final_bdd_inc_rcp45.csv', sep=',', low_memory=False)
+                df_entier = pd.read_csv('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/scenario_inc/final_bdd_inc_rcp45.csv', sep=',', low_memory=False)
             elif scenario == "Rcp 8.5 moyenne":
-                df_entier = pd.read_csv('C:/Users/antoine.chapron_adwa/Documents/geoloc_sites/final_bdd_inc_rcp85.csv', sep=',', low_memory=False)
+                df_entier = pd.read_csv('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/scenario_inc/final_bdd_inc_rcp85.csv', sep=',', low_memory=False)
             elif scenario == "Rcp 2.6 worst case":
-                df_entier = pd.read_csv('C:/Users/antoine.chapron_adwa/Documents/geoloc_sites/final_bdd_inc_rcp26wc.csv', sep=',', low_memory=False)
+                df_entier = pd.read_csv('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/scenario_inc/final_bdd_inc_rcp26wc.csv', sep=',', low_memory=False)
             elif scenario == "Rcp 4.5 worst case":
-                df_entier = pd.read_csv('C:/Users/antoine.chapron_adwa/Documents/geoloc_sites/final_bdd_inc_rcp45wc.csv', sep=',', low_memory=False)
+                df_entier = pd.read_csv('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/scenario_inc/final_bdd_inc_rcp45wc.csv', sep=',', low_memory=False)
             elif scenario == "Rcp 8.5 worst case":
-                df_entier = pd.read_csv('C:/Users/antoine.chapron_adwa/Documents/geoloc_sites/final_bdd_inc_rcp85wc.csv', sep=',', low_memory=False)
+                df_entier = pd.read_csv('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/scenario_inc/final_bdd_inc_rcp85wc.csv', sep=',', low_memory=False)
             else:
                 raise ValueError("Le paramètre risque_phys doit être 'inon','seis','mouv','sech' ou 'temp'.")
             #df_entier = pd.read_csv(f'C:/Users/antoine.chapron_adwa/Documents/geoloc_sites/final_bdd_inc_{scenario}.csv', sep=',')
@@ -325,7 +335,7 @@ if type2 == "Oui" :
             df.reset_index(drop=True, inplace=True)
     
             # Charger les données de contours géographiques de la France
-            france_gdf = gpd.read_file('C:/Users/antoine.chapron_adwa/Documents/geoloc_sites/france-detailed-boundary_911.geojson')
+            france_gdf = gpd.read_file('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/france-detailed-boundary_911.geojson')
     
             # Créer un GeoDataFrame contenant les points à vérifier
             points_gdf = gpd.GeoDataFrame(geometry=[Point(lon, lat) for lon, lat in zip(df['lon'], df['lat'])])
@@ -358,10 +368,10 @@ if type2 == "Oui" :
                                     popup=str(row['nb_jours'])).add_to(m)
 
             #df_lien = pd.read_csv('C:/Users/antoine.chapron_adwa/Documents/geoloc_sites/df_lien.csv', sep=',')
-            data_used = pd.read_hdf('C:/Users/antoine.chapron_adwa/Documents/geoloc_sites/geoloc_etabli_siren.h5', 'results_table', where=['siren = "{}"'.format(numero_siren)])
+            data_used = pd.read_hdf(filename_hdf5, 'results_table', where=['siren = "{}"'.format(numero_siren)])            
             data_used['plg_code_commune'] = data_used['plg_code_commune'].astype(str)
             data_used = pd.merge(data_used, df_lien, on="siret", how="inner" )
-            communes_jointure = pd.read_csv('C:/Users/antoine.chapron_adwa/Documents/geoloc_sites/communes_jointure_seis.csv', sep=',', low_memory=False)
+            communes_jointure = pd.read_csv('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/communes_jointure_seis.csv', sep=',', low_memory=False)
             resultat_used = pd.merge(data_used, communes_jointure, left_on='plg_code_commune',right_on='cod_commune', how='inner')
             for index, row in resultat_used.iterrows():
                         folium.Circle([row['y_latitude'], row['x_longitude']], popup = row['lib_com']).add_to(m)
