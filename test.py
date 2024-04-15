@@ -238,7 +238,7 @@ if type2 == "Oui" :
             df.reset_index(drop=True, inplace=True)
     
             # Charger les données de contours géographiques de la France
-            france_gdf = gpd.read_file('C:/Users/antoine.chapron_adwa/Documents/geoloc_sites/france-detailed-boundary_911.geojson')
+            france_gdf = gpd.read_file('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/france-detailed-boundary_911.geojson')
     
             # Créer un GeoDataFrame contenant les points à vérifier
             points_gdf = gpd.GeoDataFrame(geometry=[Point(lon, lat) for lon, lat in zip(df['lon'], df['lat'])])
