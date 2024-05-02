@@ -212,52 +212,146 @@ if type2 == "Non" :
 
 
 if type2 == "Oui" :
-    if type == "Particulier" : 
+    type3 = st.selectbox("Sélection du risque :", ["Incendies","Submersion"])
+    if type3 == "Incendies" :
+        if type == "Particulier" : 
     
-        def map_prev_inc(year, scenario, address):
-            # Charger les données de la base de données
-            if scenario == "Rcp 2.6 moyenne":
-                df_entier = pd.read_csv('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/scenario_inc/final_bdd_inc_rcp26.csv', sep=',', low_memory=False)
-            elif scenario == "Rcp 4.5 moyenne":
-                df_entier = pd.read_csv('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/scenario_inc/final_bdd_inc_rcp45.csv', sep=',', low_memory=False)
-            elif scenario == "Rcp 8.5 moyenne":
-                df_entier = pd.read_csv('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/scenario_inc/final_bdd_inc_rcp85.csv', sep=',', low_memory=False)
-            elif scenario == "Rcp 2.6 worst case":
-                df_entier = pd.read_csv('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/scenario_inc/final_bdd_inc_rcp26wc.csv', sep=',', low_memory=False)
-            elif scenario == "Rcp 4.5 worst case":
-                df_entier = pd.read_csv('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/scenario_inc/final_bdd_inc_rcp45wc.csv', sep=',', low_memory=False)
-            elif scenario == "Rcp 8.5 worst case":
-                df_entier = pd.read_csv('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/scenario_inc/final_bdd_inc_rcp85wc.csv', sep=',', low_memory=False)
-            else:
-                raise ValueError("Le paramètre risque_phys doit être 'inon','seis','mouv','sech' ou 'temp'.")
+            def map_prev_inc(year, scenario, address):
+                # Charger les données de la base de données
+                if scenario == "Rcp 2.6 moyenne":
+                    df_entier = pd.read_csv('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/scenario_inc/final_bdd_inc_rcp26.csv', sep=',', low_memory=False)
+                elif scenario == "Rcp 4.5 moyenne":
+                    df_entier = pd.read_csv('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/scenario_inc/final_bdd_inc_rcp45.csv', sep=',', low_memory=False)
+                elif scenario == "Rcp 8.5 moyenne":
+                    df_entier = pd.read_csv('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/scenario_inc/final_bdd_inc_rcp85.csv', sep=',', low_memory=False)
+                elif scenario == "Rcp 2.6 worst case":
+                    df_entier = pd.read_csv('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/scenario_inc/final_bdd_inc_rcp26wc.csv', sep=',', low_memory=False)
+                elif scenario == "Rcp 4.5 worst case":
+                    df_entier = pd.read_csv('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/scenario_inc/final_bdd_inc_rcp45wc.csv', sep=',', low_memory=False)
+                elif scenario == "Rcp 8.5 worst case":
+                    df_entier = pd.read_csv('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/scenario_inc/final_bdd_inc_rcp85wc.csv', sep=',', low_memory=False)
+                else:
+                    raise ValueError("Le paramètre risque_phys doit être 'inon','seis','mouv','sech' ou 'temp'.")
 
-            #df_entier = pd.read_csv(f'C:/Users/antoine.chapron_adwa/Documents/geoloc_sites/final_bdd_inc_{scenario}.csv', sep=',')
-            df_entier = df_entier.rename(columns={df_entier.columns[1]: 'nb_jours'})
-            df_entier['time_bnds'] = pd.to_datetime(df_entier['time_bnds'])
-            df = df_entier[df_entier['time_bnds'].dt.year == year]
-            df.reset_index(drop=True, inplace=True)
+                #df_entier = pd.read_csv(f'C:/Users/antoine.chapron_adwa/Documents/geoloc_sites/final_bdd_inc_{scenario}.csv', sep=',')
+                df_entier = df_entier.rename(columns={df_entier.columns[1]: 'nb_jours'})
+                df_entier['time_bnds'] = pd.to_datetime(df_entier['time_bnds'])
+                df = df_entier[df_entier['time_bnds'].dt.year == year]
+                df.reset_index(drop=True, inplace=True)
     
-            # Charger les données de contours géographiques de la France
-            france_gdf = gpd.read_file('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/france-detailed-boundary_911.geojson')
+                # Charger les données de contours géographiques de la France
+                france_gdf = gpd.read_file('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/france-detailed-boundary_911.geojson')
     
-            # Créer un GeoDataFrame contenant les points à vérifier
-            points_gdf = gpd.GeoDataFrame(geometry=[Point(lon, lat) for lon, lat in zip(df['lon'], df['lat'])])
+                # Créer un GeoDataFrame contenant les points à vérifier
+                points_gdf = gpd.GeoDataFrame(geometry=[Point(lon, lat) for lon, lat in zip(df['lon'], df['lat'])])
     
-            # Vérifier si chaque point est à l'intérieur des frontières de la France
-            points_inside_france = gpd.sjoin(points_gdf, france_gdf, how="inner", op='within')
+                # Vérifier si chaque point est à l'intérieur des frontières de la France
+                points_inside_france = gpd.sjoin(points_gdf, france_gdf, how="inner", op='within')
     
-            # Convertir les index des lignes de points_inside_france en une liste
-            indices_points_france = points_inside_france.index.tolist()
+                # Convertir les index des lignes de points_inside_france en une liste
+                indices_points_france = points_inside_france.index.tolist()
     
-            # Filtrer france_df pour ne garder que les lignes correspondant aux points à l'intérieur des frontières de la France
-            france_df_filtered = df.iloc[indices_points_france]
+                # Filtrer france_df pour ne garder que les lignes correspondant aux points à l'intérieur des frontières de la France
+                france_df_filtered = df.iloc[indices_points_france]
     
-            # Calculer la latitude et la longitude de l'adresse saisie
-            geolocator = BANFrance(user_agent="monapplicartecalanguedoc")
-            location = geolocator.geocode(address)
-            if location:
-                address_lat, address_lon = location.latitude, location.longitude
+                # Calculer la latitude et la longitude de l'adresse saisie
+                geolocator = BANFrance(user_agent="monapplicartecalanguedoc")
+                location = geolocator.geocode(address)
+                if location:
+                    address_lat, address_lon = location.latitude, location.longitude
         
+                    # Créer une carte Folium
+                    m = folium.Map(location=[46,2], zoom_start=6)
+                    norm = colors.Normalize(vmin=0, vmax=241)
+                    cmap = cm.OrRd
+        
+                    # Dessiner des carrés pour représenter chaque raster avec une couleur relative au nombre de jours à risque d'incendie élevé
+                    for index, row in france_df_filtered.iterrows():
+                        color = colors.rgb2hex(cmap(norm(row['nb_jours'])))
+                        folium.Rectangle(bounds=[(row['lat'] - 0.060, row['lon'] - 0.080), 
+                                      (row['lat'] + 0.060, row['lon'] + 0.080)],
+                             color=color,
+                             fill_color=color,
+                             fill_opacity=0.7,
+                             fill=True,
+                             stroke=False,
+                             popup=str(row['nb_jours'])).add_to(m)
+
+                    # Ajouter un marqueur pour l'adresse saisie
+                    folium.Circle([address_lat, address_lon], popup=address).add_to(m)
+        
+                    # Trouver le point le plus proche de l'adresse saisie
+                    nearest_point = france_df_filtered.iloc[np.argmin(np.sqrt((france_df_filtered['lat'] - address_lat)**2 + (france_df_filtered['lon'] - address_lon)**2))]
+                    nb_jours = nearest_point['nb_jours']
+        
+                    return (st.write("## Nombre de jours à risque d'incendie :"),st.write(nb_jours),st.write("## Carte interactive"),folium_static(m))
+                else:
+                    print("Adresse non trouvée. Veuillez vérifier votre saisie.")
+                    return None, None
+    
+
+            scenario = st.selectbox("Sélection du scénario:", ["Rcp 2.6 moyenne", "Rcp 4.5 moyenne", "Rcp 8.5 moyenne","Rcp 2.6 worst case","Rcp 4.5 worst case","Rcp 8.5 worst case"])
+            year = st.selectbox("Année:", [2010,2020,2030,2040,2050,2060,2070,2080,2090,2098])
+            address = st.text_input("Adresse postale :")
+    
+            if st.button("Submit"):
+                map_prev_inc(year,scenario,address)
+    
+    
+    
+        if type == "Entreprise" : 
+            @st.cache_data
+            def download_hdf5_file():
+                # URL de téléchargement du fichier HDF5 sur GitHub (vous pouvez le remplacer par le chemin local après le téléchargement)
+                url_hdf5 = 'https://github.com/AntoineChapron/G-olocalisation_des_entreprises/releases/download/geoloc_etabli/geoloc_etabli_siren.h5'
+
+                # Téléchargez le fichier HDF5 localement
+                filename_hdf5 = 'geoloc_etabli_siren.h5'
+                st.write("Téléchargement du fichier HDF5...")
+                with st.spinner('Téléchargement en cours...'):
+                    urllib.request.urlretrieve(url_hdf5, filename_hdf5)
+                return filename_hdf5
+
+            filename_hdf5 = download_hdf5_file()
+
+            def map_prev_inc_ent(year, scenario, numero_siren):
+                # Charger les données de la base de données
+                if scenario == "Rcp 2.6 moyenne":
+                    df_entier = pd.read_csv('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/scenario_inc/final_bdd_inc_rcp26.csv', sep=',', low_memory=False)
+                elif scenario == "Rcp 4.5 moyenne":
+                    df_entier = pd.read_csv('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/scenario_inc/final_bdd_inc_rcp45.csv', sep=',', low_memory=False)
+                elif scenario == "Rcp 8.5 moyenne":
+                    df_entier = pd.read_csv('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/scenario_inc/final_bdd_inc_rcp85.csv', sep=',', low_memory=False)
+                elif scenario == "Rcp 2.6 worst case":
+                    df_entier = pd.read_csv('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/scenario_inc/final_bdd_inc_rcp26wc.csv', sep=',', low_memory=False)
+                elif scenario == "Rcp 4.5 worst case":
+                    df_entier = pd.read_csv('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/scenario_inc/final_bdd_inc_rcp45wc.csv', sep=',', low_memory=False)
+                elif scenario == "Rcp 8.5 worst case":
+                    df_entier = pd.read_csv('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/scenario_inc/final_bdd_inc_rcp85wc.csv', sep=',', low_memory=False)
+                else:
+                    raise ValueError("Le paramètre risque_phys doit être 'inon','seis','mouv','sech' ou 'temp'.")
+                #df_entier = pd.read_csv(f'C:/Users/antoine.chapron_adwa/Documents/geoloc_sites/final_bdd_inc_{scenario}.csv', sep=',')
+                df_entier = df_entier.rename(columns={df_entier.columns[1]: 'nb_jours'})
+                df_entier['time_bnds'] = pd.to_datetime(df_entier['time_bnds'])
+                df = df_entier[df_entier['time_bnds'].dt.year == year]
+                df.reset_index(drop=True, inplace=True)
+    
+                # Charger les données de contours géographiques de la France
+                france_gdf = gpd.read_file('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/france-detailed-boundary_911.geojson')
+    
+                # Créer un GeoDataFrame contenant les points à vérifier
+                points_gdf = gpd.GeoDataFrame(geometry=[Point(lon, lat) for lon, lat in zip(df['lon'], df['lat'])])
+    
+                # Vérifier si chaque point est à l'intérieur des frontières de la France
+                points_inside_france = gpd.sjoin(points_gdf, france_gdf, how="inner", op='within')
+    
+                # Convertir les index des lignes de points_inside_france en une liste
+                indices_points_france = points_inside_france.index.tolist()
+    
+                # Filtrer france_df pour ne garder que les lignes correspondant aux points à l'intérieur des frontières de la France
+                france_df_filtered = df.iloc[indices_points_france]
+    
+    
                 # Créer une carte Folium
                 m = folium.Map(location=[46,2], zoom_start=6)
                 norm = colors.Normalize(vmin=0, vmax=241)
@@ -268,98 +362,6 @@ if type2 == "Oui" :
                     color = colors.rgb2hex(cmap(norm(row['nb_jours'])))
                     folium.Rectangle(bounds=[(row['lat'] - 0.060, row['lon'] - 0.080), 
                                       (row['lat'] + 0.060, row['lon'] + 0.080)],
-                             color=color,
-                             fill_color=color,
-                             fill_opacity=0.7,
-                             fill=True,
-                             stroke=False,
-                             popup=str(row['nb_jours'])).add_to(m)
-
-                # Ajouter un marqueur pour l'adresse saisie
-                folium.Circle([address_lat, address_lon], popup=address).add_to(m)
-        
-                # Trouver le point le plus proche de l'adresse saisie
-                nearest_point = france_df_filtered.iloc[np.argmin(np.sqrt((france_df_filtered['lat'] - address_lat)**2 + (france_df_filtered['lon'] - address_lon)**2))]
-                nb_jours = nearest_point['nb_jours']
-        
-                return (st.write("## Nombre de jours à risque d'incendie :"),st.write(nb_jours),st.write("## Carte interactive"),folium_static(m))
-            else:
-                print("Adresse non trouvée. Veuillez vérifier votre saisie.")
-                return None, None
-    
-
-        scenario = st.selectbox("Sélection du scénario:", ["Rcp 2.6 moyenne", "Rcp 4.5 moyenne", "Rcp 8.5 moyenne","Rcp 2.6 worst case","Rcp 4.5 worst case","Rcp 8.5 worst case"])
-        year = st.selectbox("Année:", [2010,2020,2030,2040,2050,2060,2070,2080,2090,2098])
-        address = st.text_input("Adresse postale :")
-    
-        if st.button("Submit"):
-            map_prev_inc(year,scenario,address)
-    
-    
-    
-    if type == "Entreprise" : 
-        @st.cache_data
-        def download_hdf5_file():
-            # URL de téléchargement du fichier HDF5 sur GitHub (vous pouvez le remplacer par le chemin local après le téléchargement)
-            url_hdf5 = 'https://github.com/AntoineChapron/G-olocalisation_des_entreprises/releases/download/geoloc_etabli/geoloc_etabli_siren.h5'
-
-            # Téléchargez le fichier HDF5 localement
-            filename_hdf5 = 'geoloc_etabli_siren.h5'
-            st.write("Téléchargement du fichier HDF5...")
-            with st.spinner('Téléchargement en cours...'):
-                urllib.request.urlretrieve(url_hdf5, filename_hdf5)
-            return filename_hdf5
-
-        filename_hdf5 = download_hdf5_file()
-
-        def map_prev_inc_ent(year, scenario, numero_siren):
-            # Charger les données de la base de données
-            if scenario == "Rcp 2.6 moyenne":
-                df_entier = pd.read_csv('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/scenario_inc/final_bdd_inc_rcp26.csv', sep=',', low_memory=False)
-            elif scenario == "Rcp 4.5 moyenne":
-                df_entier = pd.read_csv('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/scenario_inc/final_bdd_inc_rcp45.csv', sep=',', low_memory=False)
-            elif scenario == "Rcp 8.5 moyenne":
-                df_entier = pd.read_csv('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/scenario_inc/final_bdd_inc_rcp85.csv', sep=',', low_memory=False)
-            elif scenario == "Rcp 2.6 worst case":
-                df_entier = pd.read_csv('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/scenario_inc/final_bdd_inc_rcp26wc.csv', sep=',', low_memory=False)
-            elif scenario == "Rcp 4.5 worst case":
-                df_entier = pd.read_csv('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/scenario_inc/final_bdd_inc_rcp45wc.csv', sep=',', low_memory=False)
-            elif scenario == "Rcp 8.5 worst case":
-                df_entier = pd.read_csv('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/scenario_inc/final_bdd_inc_rcp85wc.csv', sep=',', low_memory=False)
-            else:
-                raise ValueError("Le paramètre risque_phys doit être 'inon','seis','mouv','sech' ou 'temp'.")
-            #df_entier = pd.read_csv(f'C:/Users/antoine.chapron_adwa/Documents/geoloc_sites/final_bdd_inc_{scenario}.csv', sep=',')
-            df_entier = df_entier.rename(columns={df_entier.columns[1]: 'nb_jours'})
-            df_entier['time_bnds'] = pd.to_datetime(df_entier['time_bnds'])
-            df = df_entier[df_entier['time_bnds'].dt.year == year]
-            df.reset_index(drop=True, inplace=True)
-    
-            # Charger les données de contours géographiques de la France
-            france_gdf = gpd.read_file('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/france-detailed-boundary_911.geojson')
-    
-            # Créer un GeoDataFrame contenant les points à vérifier
-            points_gdf = gpd.GeoDataFrame(geometry=[Point(lon, lat) for lon, lat in zip(df['lon'], df['lat'])])
-    
-            # Vérifier si chaque point est à l'intérieur des frontières de la France
-            points_inside_france = gpd.sjoin(points_gdf, france_gdf, how="inner", op='within')
-    
-            # Convertir les index des lignes de points_inside_france en une liste
-            indices_points_france = points_inside_france.index.tolist()
-    
-            # Filtrer france_df pour ne garder que les lignes correspondant aux points à l'intérieur des frontières de la France
-            france_df_filtered = df.iloc[indices_points_france]
-    
-    
-            # Créer une carte Folium
-            m = folium.Map(location=[46,2], zoom_start=6)
-            norm = colors.Normalize(vmin=0, vmax=241)
-            cmap = cm.OrRd
-        
-            # Dessiner des carrés pour représenter chaque raster avec une couleur relative au nombre de jours à risque d'incendie élevé
-            for index, row in france_df_filtered.iterrows():
-                color = colors.rgb2hex(cmap(norm(row['nb_jours'])))
-                folium.Rectangle(bounds=[(row['lat'] - 0.060, row['lon'] - 0.080), 
-                                      (row['lat'] + 0.060, row['lon'] + 0.080)],
                                     color=color,
                                     fill_color=color,
                                     fill_opacity=0.7,
@@ -367,27 +369,29 @@ if type2 == "Oui" :
                                     stroke=False,
                                     popup=str(row['nb_jours'])).add_to(m)
 
-            #df_lien = pd.read_csv('C:/Users/antoine.chapron_adwa/Documents/geoloc_sites/df_lien.csv', sep=',')
-            data_used = pd.read_hdf(filename_hdf5, 'results_table', where=['siren = "{}"'.format(numero_siren)])            
-            data_used['plg_code_commune'] = data_used['plg_code_commune'].astype(str)
-            data_used = pd.merge(data_used, df_lien, on="siret", how="inner" )
-            communes_jointure = pd.read_csv('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/communes_jointure_seis.csv', sep=',', low_memory=False)
-            resultat_used = pd.merge(data_used, communes_jointure, left_on='plg_code_commune',right_on='cod_commune', how='inner')
-            for index, row in resultat_used.iterrows():
-                        folium.Circle([row['y_latitude'], row['x_longitude']], popup = row['lib_com']).add_to(m)
-            return(st.write("## Carte interactive"),folium_static(m))
+                #df_lien = pd.read_csv('C:/Users/antoine.chapron_adwa/Documents/geoloc_sites/df_lien.csv', sep=',')
+                data_used = pd.read_hdf(filename_hdf5, 'results_table', where=['siren = "{}"'.format(numero_siren)])            
+                data_used['plg_code_commune'] = data_used['plg_code_commune'].astype(str)
+                data_used = pd.merge(data_used, df_lien, on="siret", how="inner" )
+                communes_jointure = pd.read_csv('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/communes_jointure_seis.csv', sep=',', low_memory=False)
+                resultat_used = pd.merge(data_used, communes_jointure, left_on='plg_code_commune',right_on='cod_commune', how='inner')
+                for index, row in resultat_used.iterrows():
+                            folium.Circle([row['y_latitude'], row['x_longitude']], popup = row['lib_com']).add_to(m)
+                return(st.write("## Carte interactive"),folium_static(m))
         
         
-        # Zone de saisie pour le numéro SIREN
-        numero_siren = st.text_input("numéro SIREN (format XXXXXXXXX):")
+            # Zone de saisie pour le numéro SIREN
+            numero_siren = st.text_input("numéro SIREN (format XXXXXXXXX):")
 
-        scenario = st.selectbox("Sélection du scénario:", ["Rcp 2.6 moyenne", "Rcp 4.5 moyenne", "Rcp 8.5 moyenne","Rcp 2.6 worst case","Rcp 4.5 worst case","Rcp 8.5 worst case"])
+            scenario = st.selectbox("Sélection du scénario:", ["Rcp 2.6 moyenne", "Rcp 4.5 moyenne", "Rcp 8.5 moyenne","Rcp 2.6 worst case","Rcp 4.5 worst case","Rcp 8.5 worst case"])
         
-        year = st.selectbox("Année:", [2010,2020,2030,2040,2050,2060,2070,2080,2090,2098])
+            year = st.selectbox("Année:", [2010,2020,2030,2040,2050,2060,2070,2080,2090,2098])
 
-        # Bouton pour générer la carte
-        if st.button("Submit"):
-            map_prev_inc_ent(year, scenario, numero_siren)
+            # Bouton pour générer la carte
+            if st.button("Submit"):
+                map_prev_inc_ent(year, scenario, numero_siren)
 
-
+    if type3 == "Incendies" :
+        def map_prev_sub() :
+            return(st.write("In progress"))
 
