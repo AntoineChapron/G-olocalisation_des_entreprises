@@ -395,5 +395,8 @@ if type2 == "Oui" :
         def map_prev_sub() :
             return(st.write("In progress"))
         
+        if st.button("Submit"):
+                map_prev_sub()
+        
 
 
