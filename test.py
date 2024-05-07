@@ -391,7 +391,7 @@ if type2 == "Oui" :
             if st.button("Submit"):
                 map_prev_inc_ent(year, scenario, numero_siren)
 
-    if type3 == "Incendies" :
+    if type3 == "Submersion" :
         def map_prev_sub() :
             return(st.write("In progress"))
         
