@@ -238,7 +238,13 @@ if type2 == "Oui" :
                     df_entier = pd.read_csv('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/scenario_inc/final_bdd_inc_rcp85wc.csv', sep=',', low_memory=False)
                 else:
                     raise ValueError("Le paramètre risque_phys doit être 'inon','seis','mouv','sech' ou 'temp'.")
-
+                
+                
+                #Charger l'historique des catnat dans la commune
+                
+                histo_concat = pd.read_csv('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/histo_concat.csv')
+                
+                
                 #df_entier = pd.read_csv(f'C:/Users/antoine.chapron_adwa/Documents/geoloc_sites/final_bdd_inc_{scenario}.csv', sep=',')
                 df_entier = df_entier.rename(columns={df_entier.columns[1]: 'nb_jours'})
                 df_entier['time_bnds'] = pd.to_datetime(df_entier['time_bnds'])
@@ -263,6 +269,11 @@ if type2 == "Oui" :
                 # Calculer la latitude et la longitude de l'adresse saisie
                 geolocator = BANFrance(user_agent="monapplicartecalanguedoc")
                 location = geolocator.geocode(address)
+                
+                # Garder l'historque sur la commune concernée
+                com_loc = location.raw.get('properties', {}).get('city')
+                histo_concat = histo_concat[histo_concat["lib_commune" == com_loc]]
+                
                 if location:
                     address_lat, address_lon = location.latitude, location.longitude
         
@@ -290,7 +301,7 @@ if type2 == "Oui" :
                     nearest_point = france_df_filtered.iloc[np.argmin(np.sqrt((france_df_filtered['lat'] - address_lat)**2 + (france_df_filtered['lon'] - address_lon)**2))]
                     nb_jours = nearest_point['nb_jours']
         
-                    return (st.write("## Nombre de jours à risque d'incendie :"),st.write(nb_jours),st.write("## Carte interactive"),folium_static(m))
+                    return (st.write("## Nombre de jours à risque d'incendie :"),st.write(nb_jours),st.write("## Carte interactive"),folium_static(m), st.write("Historique"), st.write(histo_concat))
                 else:
                     print("Adresse non trouvée. Veuillez vérifier votre saisie.")
                     return None, None
