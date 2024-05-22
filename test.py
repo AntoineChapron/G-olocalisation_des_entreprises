@@ -272,7 +272,7 @@ if type2 == "Oui" :
                 
                 # Garder l'historque sur la commune concernée
                 com_loc = location.raw.get('properties', {}).get('city')
-                histo_concat = histo_concat[histo_concat["lib_commune" == com_loc]]
+                histo_concat = histo_concat[histo_concat["lib_commune"] == com_loc]
                 
                 if location:
                     address_lat, address_lon = location.latitude, location.longitude
