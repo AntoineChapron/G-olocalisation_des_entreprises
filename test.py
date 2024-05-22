@@ -86,6 +86,10 @@ if type2 == "Non" :
                 location = location[1]
                 jointure = pd.read_csv('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/jointure.csv',sep=',')
 
+                historique = communes_jointure.drop_duplicates()
+                historique = historique[historique["lib_commune"] == "com_loc"]
+                historique = historique[['lib_commune','dat_deb','dat_fin','classe_ris']]
+                
                 moyenne = jointure[jointure["lib_commune"] == com_loc]
 
                 moyenne_fin = [["Risque", "Inondation", "Mouvement de terrain", "Sécheresse", "Séisme", "Tempête"],
@@ -99,7 +103,7 @@ if type2 == "Non" :
 
                     # Affichage de la carte Folium
                     folium.Circle(location, popup=address).add_to(risque)
-                    return(moyenne_fin,risque)
+                    return(moyenne_fin,risque,historique)
                 else:
                     st.error("Adresse non trouvée. Veuillez vérifier votre saisie.")
             else:
@@ -112,11 +116,13 @@ if type2 == "Non" :
     
     
         if st.button("Submit"):
-            moyenne_fin, risque = location_risque(address, risque_phys)
+            moyenne_fin, risque, historique = location_risque(address, risque_phys)
             st.write("### Risque")
             st.write(moyenne_fin)
             st.write("## Carte interactive")
             folium_static(risque)
+            st.write("Historique")
+            st.write(historique)
     
     
     
