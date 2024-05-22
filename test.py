@@ -396,7 +396,9 @@ if type2 == "Oui" :
                 # Historique catnat sur les communes concernées
                 histo_concat = pd.read_csv('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/histo_concat.csv')
                 
-                histo_concat = pd.merge(data_used, histo_concat, left_on='plg_code_commune',right_on='cod_commune', how='inner')
+                histo_concat = pd.merge(histo_concat,data_used, left_on='cod_commune', right_on='plg_code_commune', how='inner').dropna()
+                
+                histo_concat = histo_concat[['lib_commune','y_latitude','x_longitude','dat_deb','dat_fin']]
                 
                 #Affichage des points
                 for index, row in resultat_used.iterrows():
