@@ -87,7 +87,7 @@ if type2 == "Non" :
                 jointure = pd.read_csv('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/jointure.csv',sep=',')
 
                 historique = communes_jointure.drop_duplicates()
-                historique = historique[historique["lib_commune"] == "com_loc"]
+                historique = historique[historique["lib_commune"] == com_loc]
                 historique = historique[['lib_commune','dat_deb','dat_fin','classe_ris']]
                 
                 moyenne = jointure[jointure["lib_commune"] == com_loc]
