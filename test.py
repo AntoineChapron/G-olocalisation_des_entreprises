@@ -185,7 +185,7 @@ if type2 == "Non" :
             resultat_used = pd.merge(data_used, communes_jointure, left_on='plg_code_commune',right_on='cod_commune', how='inner')
 
             resultat_used = resultat_used[['lib_commune','y_latitude','x_longitude','dat_deb','dat_fin','classe_ris']]
-    
+            resultat_used = resultat_used.drop_duplicates()
     
 
             for index, row in resultat_used.iterrows():
