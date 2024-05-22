@@ -398,7 +398,7 @@ if type2 == "Oui" :
                 
                 histo_concat = pd.merge(histo_concat,data_used, left_on='cod_commune', right_on='plg_code_commune', how='inner').dropna()
                 
-                histo_concat = histo_concat[['lib_commune','y_latitude','x_longitude','dat_deb','dat_fin']]
+                histo_concat = histo_concat[['lib_commune','lib_risque_jo','y_latitude','x_longitude','dat_deb','dat_fin']]
                 
                 #Affichage des points
                 for index, row in resultat_used.iterrows():
