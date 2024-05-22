@@ -392,9 +392,16 @@ if type2 == "Oui" :
                 data_used = pd.merge(data_used, df_lien, on="siret", how="inner" )
                 communes_jointure = pd.read_csv('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/communes_jointure_seis.csv', sep=',', low_memory=False)
                 resultat_used = pd.merge(data_used, communes_jointure, left_on='plg_code_commune',right_on='cod_commune', how='inner')
+                
+                # Historique catnat sur les communes concernées
+                histo_concat = pd.read_csv('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/histo_concat.csv')
+                
+                histo_concat = pd.merge(data_used, histo_concat, left_on='plg_code_commune',right_on='cod_commune', how='inner')
+                
+                #Affichage des points
                 for index, row in resultat_used.iterrows():
                             folium.Circle([row['y_latitude'], row['x_longitude']], popup = row['lib_com']).add_to(m)
-                return(st.write("## Carte interactive"),folium_static(m))
+                return(st.write("## Carte interactive"),folium_static(m), st.write("Historique"), st.write(histo_concat))
         
         
             # Zone de saisie pour le numéro SIREN
