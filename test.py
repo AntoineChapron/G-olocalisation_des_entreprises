@@ -42,7 +42,9 @@ df_lien = get_df_lien()
 type2 = st.selectbox("Souhaitez-vous afficher des cartes prédictives ? :", ["Oui","Non"])
 type = st.selectbox("Type :", ["Particulier","Entreprise"])
 if type2 == "Non" :
-    st.write("Pour chaque risque physique un score sur 5 est calculé en fonction du nombre de fois où ces catastrophes naturelles se sont produites par commune depuis le 15 août 1985.")
+    st.write("Pour chaque risque physique un score sur 5 est calculé en fonction du nombre de fois où ces catastrophes naturelles se sont produites par commune depuis le 15 août 1985.
+             On utilise les données de la base GASPAR pour obtenir l'historique par commune.
+            Pour les entreprises possédant plusieurs bâtiments dans plusieurs communes on fait la moyenne des scores des communes pour obtenir un score sur 5 par risque physique pour l'entreprise.")
     if type == "Particulier" : 
  
         def location_risque(address,risque_phys):
@@ -218,8 +220,12 @@ if type2 == "Non" :
 
 
 if type2 == "Oui" :
+
     type3 = st.selectbox("Sélection du risque :", ["Incendies","Submersion"])
     if type3 == "Incendies" :
+        st.write("Pour avoir des valeurs prédictives on utilise les données de la base Copernicus. Ici la variable représente le nombre de jours 
+        par année et par raster à risque d'incendie élevé. On propose à l'utilisateur de choisir parmi 3 différents scénarios RCP et parmi 2 valeurs (mean et worst case).
+        Ces valeurs représentent respectivement la moyenne et le pire des cas calculés par une combinaison de différents modèles climatiques.")
         if type == "Particulier" : 
     
             def map_prev_inc(year, scenario, address):
