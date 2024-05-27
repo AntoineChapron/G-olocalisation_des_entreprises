@@ -12,6 +12,21 @@ import matplotlib.cm as cm
 import matplotlib.colors as colors
 import geopandas as gpd
 
+st.markdown(
+    """
+    <style>
+    .centered-title {
+        text-align: center;
+        font-size: 50px;
+        font-weight: bold;
+    }
+    </style>
+    <div class="centered-title">
+        CatMap
+    </div>
+    """,
+    unsafe_allow_html=True
+)
 st.write("""
 # Géolocalisation des bâtiments des entreprises
 ## Fonds de cartes de risques physiques
