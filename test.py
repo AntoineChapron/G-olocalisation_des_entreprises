@@ -42,7 +42,7 @@ df_lien = get_df_lien()
 type2 = st.selectbox("Souhaitez-vous afficher des cartes prédictives ? :", ["Oui","Non"])
 type = st.selectbox("Type :", ["Particulier","Entreprise"])
 if type2 == "Non" :
-
+    st.write("Pour chaque risque physique un score sur 5 est calculé en fonction du nombre de fois où ces catastrophes naturelles se sont produites par commune depuis le 15 août 1985.")
     if type == "Particulier" : 
  
         def location_risque(address,risque_phys):
