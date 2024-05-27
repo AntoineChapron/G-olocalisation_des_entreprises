@@ -221,9 +221,7 @@ if type2 == "Oui" :
 
     type3 = st.selectbox("Sélection du risque :", ["Incendies","Submersion"])
     if type3 == "Incendies" :
-        st.write("Pour avoir des valeurs prédictives on utilise les données de la base Copernicus. Ici la variable représente le nombre de jours 
-        par année et par raster à risque d'incendie élevé. On propose à l'utilisateur de choisir parmi 3 différents scénarios RCP et parmi 2 valeurs (mean et worst case).
-        Ces valeurs représentent respectivement la moyenne et le pire des cas calculés par une combinaison de différents modèles climatiques.")
+        st.write("Pour avoir des valeurs prédictives on utilise les données de la base Copernicus. Ici la variable représente le nombre de jours par année et par raster à risque d'incendie élevé. On propose à l'utilisateur de choisir parmi 3 différents scénarios RCP et parmi 2 valeurs (mean et worst case). Ces valeurs représentent respectivement la moyenne et le pire des cas calculés par une combinaison de différents modèles climatiques.")
         if type == "Particulier" : 
     
             def map_prev_inc(year, scenario, address):
