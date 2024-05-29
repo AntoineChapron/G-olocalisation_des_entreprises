@@ -11,6 +11,8 @@ import numpy as np
 import matplotlib.cm as cm
 import matplotlib.colors as colors
 import geopandas as gpd
+import xarray as xr
+from branca.colormap import linear
 
 st.markdown(
     """
@@ -288,7 +290,7 @@ if type2 == "Oui" :
                 geolocator = BANFrance(user_agent="monapplicartecalanguedoc")
                 location = geolocator.geocode(address)
                 
-                # Garder l'historque sur la commune concernée
+                # Garder l'historique sur la commune concernée
                 com_loc = location.raw.get('properties', {}).get('city')
                 histo_concat = histo_concat[histo_concat["lib_commune"] == com_loc]
                 
@@ -436,11 +438,109 @@ if type2 == "Oui" :
                 map_prev_inc_ent(year, scenario, numero_siren)
 
     if type3 == "Submersion" :
-        def map_prev_sub() :
-            return(st.write("In progress"))
+        if type == "Particulier" : 
+    
+            def map_prev_sub(surge, address):
+                # Charger les données de submersion marine
+                if surge == "Période de retour 1 an":
+                    sea_surge = xr.open_dataset('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/sea_level_data/surgerp1.nc', sep=',', low_memory=False)
+                if surge == "Période de retour 5 ans":
+                    sea_surge = xr.open_dataset('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/sea_level_data/surgerp5.nc', sep=',', low_memory=False)
+                if surge == "Période de retour 10 ans":
+                    sea_surge = xr.open_dataset('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/sea_level_data/surgerp10.nc', sep=',', low_memory=False)
+                if surge == "Période de retour 25 ans":
+                    sea_surge = xr.open_dataset('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/sea_level_data/surgerp25.nc', sep=',', low_memory=False)
+                if surge == "Période de retour 50 ans":
+                    sea_surge = xr.open_dataset('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/sea_level_data/surgerp50.nc', sep=',', low_memory=False)
+                if surge == "Période de retour 100 ans":
+                    sea_surge = xr.open_dataset('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/sea_level_data/surgerp100.nc', sep=',', low_memory=False)
+
+                test_df = sea_surge.to_dataframe()
+                france_df = test_df[(test_df['station_x_coordinate'] >= -5) & (test_df['station_x_coordinate'] <= 10) & (test_df['station_y_coordinate'] >= 41) & (test_df['station_y_coordinate'] <= 51)]
+                france_df = france_df.rename(columns={france_df.columns[1]: 'lat', france_df.columns[2]: 'lon', france_df.columns[0]: 'surge'})
+                france_df.reset_index(drop=True, inplace=True)
+
+                # Charger les données de contours géographiques de la France
+                france_gdf = gpd.read_file('C:/Users/antoine.chapron_adwa/Documents/geoloc_sites/france-detailed-boundary_911.geojson')
+
+                # Projeter les géométries au CRS approprié avant d'appliquer un tampon
+                france_gdf = france_gdf.to_crs(epsg=32631)  # EPSG:32631 est un exemple, choisissez un CRS projeté approprié
+                france_gdf['geometry'] = france_gdf['geometry'].buffer(6000)  # tampon de 3000 mètres
+
+                # Re-projeter au CRS géographique après l'application du tampon
+                france_gdf = france_gdf.to_crs(epsg=4326)
+
+                # Créer un GeoDataFrame contenant les points à vérifier
+                points_gdf = gpd.GeoDataFrame(geometry=[Point(lon, lat) for lon, lat in zip(france_df['lon'], france_df['lat'])], crs="EPSG:4326")
+
+                # Vérifier si chaque point est à l'intérieur des frontières de la France
+                points_inside_france = gpd.sjoin(points_gdf, france_gdf, how="inner", predicate='within')
+                indices_points_france = points_inside_france.index.tolist()
+                france_df_filtered = france_df.iloc[indices_points_france]
+
+                # Calculer la latitude et la longitude de l'adresse saisie
+                geolocator = BANFrance(user_agent="monapplicartecalanguedoc")
+                location = geolocator.geocode(address)
+
+                if not location:
+                    return None, None
+
+                address_lat, address_lon = location.latitude, location.longitude
+
+                # Fonction pour vérifier si un point est à l'intérieur d'un rectangle défini
+                def point_in_rectangle(point, rect_center, width, height):
+                    lat, lon = point
+                    rect_lat, rect_lon = rect_center
+                    return (rect_lat - height / 2 <= lat <= rect_lat + height / 2) and (rect_lon - width / 2 <= lon <= rect_lon + width / 2)
+
+                surge_value = None
+                for _, row in france_df_filtered.iterrows():
+                    if point_in_rectangle((address_lat, address_lon), (row['lat'], row['lon']), 0.14, 0.1):
+                        surge_value = row['surge']
+                        break
+
+                # Créer une carte folium
+                m = folium.Map(location=[46, 2], zoom_start=6)  # Coordonnées du centre de la France
+                norm = colors.Normalize(vmin=0, vmax=4)
+                cmap = cm.OrRd
+
+                # Dessiner des carrés pour représenter chaque raster avec une couleur relative au nombre de jours à risque d'incendie élevé
+                for _, row in france_df_filtered.iterrows():
+                    color = colors.rgb2hex(cmap(norm(row['surge'])))
+                    folium.Rectangle(
+                        bounds=[(row['lat'] - 0.05, row['lon'] - 0.07), (row['lat'] + 0.05, row['lon'] + 0.07)],
+                        color=color,
+                        fill_color=color,
+                        fill_opacity=0.7,
+                        fill=True,
+                        stroke=False,
+                        popup=str(row['surge'])
+                    ).add_to(m)
+
+                # Ajouter un marqueur pour l'adresse saisie
+                folium.Circle([address_lat, address_lon], popup=address, color='blue', fill=True, fill_color='blue').add_to(m)
+
+                legend = linear.OrRd_03.scale(0, 4)
+                legend.caption = 'Surge level (m)'
+                legend.add_to(m)
+                m.add_child(legend)
+                
+                if surge_value is not None:
+                    return (st.write("## Carte interactive"),folium_static(m), st.write(f"La valeur de submersion pour l'adresse {address} est {surge_value}"))
+                else:
+                    return (st.write("## Carte interactive"),folium_static(m), st.write(f"L'adresse {address} ne se trouve dans aucune zone de submersion définie."))
+                
+            surge = st.selectbox("Sélection de la période de retour:", ["Période de retour 1 an", "Période de retour 5 ans", "Période de retour 10 ans","Période de retour 25 ans","Période de retour 50 ans","Période de retour 100 ans"])
+            address = st.text_input("Adresse postale :")
+    
+            if st.button("Submit"):
+                map_prev_sub(surge,address)
         
-        if st.button("Submit"):
-                map_prev_sub()
+        if type == "Entreprise" :
+            if st.button("Submit"):
+                st.write("In progress")
+            
+
         
 
 
