@@ -639,11 +639,23 @@ if type2 == "Oui" :
                 buildings_in_surge_areas = gpd.sjoin(entreprise_points_gdf, rectangles_gdf, how="inner", predicate='within')
                 num_buildings_in_surge_areas = len(buildings_in_surge_areas)
 
-                # Afficher les bâtiments sur la carte
-                for index, row in resultat_used.iterrows():
-                    folium.Circle([row['y_latitude'], row['x_longitude']], popup=row['lib_com'], color='blue', radius=10).add_to(m)
+                # Effectuer la jointure spatiale pour récupérer les valeurs de submersion pour chaque bâtiment
+                buildings_with_surge_values = gpd.sjoin(entreprise_points_gdf, rectangles_gdf, how="inner", predicate='within')
 
-                return (st.write("## Carte interactive"),folium_static(m),st.write(f"Il y a {num_buildings_in_surge_areas} bâtiments dans les zones de submersion."), st.write("Historique"), st.write(histo_concat))
+                # Calculer la moyenne des valeurs de submersion pour chaque bâtiment
+                avg_surge_values_per_building = buildings_with_surge_values.groupby('index_right')['surge'].mean()
+
+                # Ajouter une colonne 'avg_surge_value' aux données des bâtiments
+                resultat_used['avg_surge_value'] = resultat_used.index.map(avg_surge_values_per_building)
+
+                # Afficher les bâtiments sur la carte avec la moyenne des valeurs de submersion
+                for index, row in resultat_used.iterrows():
+                    folium.Circle([row['y_latitude'], row['x_longitude']], popup=f"Commune: {row['lib_com']}, Moyenne submersion: {row['avg_surge_value']:.2f}", color='blue', radius=10).add_to(m)
+
+                # Calculer la moyenne globale des valeurs de submersion des bâtiments
+                global_avg_surge_value = resultat_used['avg_surge_value'].mean()
+
+                return (st.write("## Carte interactive"),folium_static(m),st.write(f"Il y a {num_buildings_in_surge_areas} bâtiments dans les zones de submersion."),st.write(f"Moyenne globale des valeurs de submersion des bâtiments : {global_avg_surge_value:.2f}"), st.write("Historique"), st.write(histo_concat))
 
             surge = st.selectbox("Sélection de la période de retour:", ["Période de retour 1 an", "Période de retour 5 ans", "Période de retour 10 ans", "Période de retour 25 ans", "Période de retour 50 ans", "Période de retour 100 ans"])
             numero_siren = st.text_input("numéro SIREN (format XXXXXXXXX):")
