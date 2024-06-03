@@ -11,7 +11,6 @@ import numpy as np
 import matplotlib.cm as cm
 import matplotlib.colors as colors
 import geopandas as gpd
-import xarray as xr
 from branca.colormap import linear
 
 st.markdown(
@@ -443,17 +442,17 @@ if type2 == "Oui" :
             def map_prev_sub(surge, address):
                 # Charger les données de submersion marine
                 if surge == "Période de retour 1 an":
-                    sea_surge = xr.open_dataset('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/sea_level_data/surgerp1.nc')
+                    sea_surge = pd.read_csv('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/sea_level_data/surgerp1.csv', sep=',', low_memory=False)
                 if surge == "Période de retour 5 ans":
-                    sea_surge = xr.open_dataset('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/sea_level_data/surgerp5.nc')
+                    sea_surge = pd.read_csv('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/sea_level_data/surgerp5.csv', sep=',', low_memory=False)
                 if surge == "Période de retour 10 ans":
-                    sea_surge = xr.open_dataset('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/sea_level_data/surgerp10.nc')
+                    sea_surge = pd.read_csv('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/sea_level_data/surgerp10.csv', sep=',', low_memory=False)
                 if surge == "Période de retour 25 ans":
-                    sea_surge = xr.open_dataset('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/sea_level_data/surgerp25.nc')
+                    sea_surge = pd.read_csv('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/sea_level_data/surgerp25.csv', sep=',', low_memory=False)
                 if surge == "Période de retour 50 ans":
-                    sea_surge = xr.open_dataset('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/sea_level_data/surgerp50.nc')
+                    sea_surge = pd.read_csv('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/sea_level_data/surgerp50.csv', sep=',', low_memory=False)
                 if surge == "Période de retour 100 ans":
-                    sea_surge = xr.open_dataset('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/sea_level_data/surgerp100.nc')
+                    sea_surge = pd.read_csv('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/sea_level_data/surgerp100.csv', sep=',', low_memory=False)
 
                 test_df = sea_surge.to_dataframe()
                 france_df = test_df[(test_df['station_x_coordinate'] >= -5) & (test_df['station_x_coordinate'] <= 10) & (test_df['station_y_coordinate'] >= 41) & (test_df['station_y_coordinate'] <= 51)]
