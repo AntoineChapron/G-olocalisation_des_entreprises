@@ -625,6 +625,13 @@ if type2 == "Oui" :
                 communes_jointure = pd.read_csv('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/communes_jointure_seis.csv', sep=',', low_memory=False)
                 resultat_used = pd.merge(data_used, communes_jointure, left_on='plg_code_commune', right_on='cod_commune', how='inner')
 
+                # Historique catnat sur les communes concernées
+                histo_concat = pd.read_csv('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/histo_concat.csv')
+                
+                histo_concat = pd.merge(histo_concat,data_used, left_on='cod_commune', right_on='plg_code_commune', how='inner').dropna()
+                
+                histo_concat = histo_concat[['lib_commune','lib_risque_jo','y_latitude','x_longitude','dat_deb','dat_fin']]
+                
                 # Créer un GeoDataFrame pour les bâtiments de l'entreprise
                 entreprise_points_gdf = gpd.GeoDataFrame(geometry=[Point(lon, lat) for lon, lat in zip(resultat_used['x_longitude'], resultat_used['y_latitude'])], crs="EPSG:4326")
 
@@ -636,7 +643,7 @@ if type2 == "Oui" :
                 for index, row in resultat_used.iterrows():
                     folium.Circle([row['y_latitude'], row['x_longitude']], popup=row['lib_com'], color='blue', radius=10).add_to(m)
 
-                return (st.write(f"## Carte interactive avec {num_buildings_in_surge_areas} bâtiments dans les zones de submersion"), folium_static(m))
+                return (st.write("## Carte interactive"),folium_static(m),st.write(f"Il y a {num_buildings_in_surge_areas} bâtiments dans les zones de submersion."), st.write("Historique"), st.write(histo_concat))
 
             surge = st.selectbox("Sélection de la période de retour:", ["Période de retour 1 an", "Période de retour 5 ans", "Période de retour 10 ans", "Période de retour 25 ans", "Période de retour 50 ans", "Période de retour 100 ans"])
             numero_siren = st.text_input("numéro SIREN (format XXXXXXXXX):")
