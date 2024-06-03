@@ -535,13 +535,10 @@ if type2 == "Oui" :
             if st.button("Submit"):
                 map_prev_sub(surge,address)
         
-        if type == "Entreprise" :
+        if type == "Entreprise":
             @st.cache_data
             def download_hdf5_file():
-                # URL de téléchargement du fichier HDF5 sur GitHub (vous pouvez le remplacer par le chemin local après le téléchargement)
                 url_hdf5 = 'https://github.com/AntoineChapron/G-olocalisation_des_entreprises/releases/download/geoloc_etabli/geoloc_etabli_siren.h5'
-
-                # Téléchargez le fichier HDF5 localement
                 filename_hdf5 = 'geoloc_etabli_siren.h5'
                 st.write("Téléchargement du fichier HDF5...")
                 with st.spinner('Téléchargement en cours...'):
@@ -550,23 +547,24 @@ if type2 == "Oui" :
 
             filename_hdf5 = download_hdf5_file()
 
-            
             def map_prev_sub(surge, numero_siren):
                 # Charger les données de submersion marine
                 if surge == "Période de retour 1 an":
                     sea_surge = pd.read_csv('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/sea_level_data/surgerp1.csv', sep=',', low_memory=False)
-                if surge == "Période de retour 5 ans":
+                elif surge == "Période de retour 5 ans":
                     sea_surge = pd.read_csv('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/sea_level_data/surgerp5.csv', sep=',', low_memory=False)
-                if surge == "Période de retour 10 ans":
+                elif surge == "Période de retour 10 ans":
                     sea_surge = pd.read_csv('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/sea_level_data/surgerp10.csv', sep=',', low_memory=False)
-                if surge == "Période de retour 25 ans":
+                elif surge == "Période de retour 25 ans":
                     sea_surge = pd.read_csv('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/sea_level_data/surgerp25.csv', sep=',', low_memory=False)
-                if surge == "Période de retour 50 ans":
+                elif surge == "Période de retour 50 ans":
                     sea_surge = pd.read_csv('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/sea_level_data/surgerp50.csv', sep=',', low_memory=False)
-                if surge == "Période de retour 100 ans":
+                elif surge == "Période de retour 100 ans":
                     sea_surge = pd.read_csv('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/sea_level_data/surgerp100.csv', sep=',', low_memory=False)
+                else:
+                    st.error("Période de retour non reconnue.")
+                    return
 
-                
                 france_df = sea_surge[(sea_surge['station_x_coordinate'] >= -5) & (sea_surge['station_x_coordinate'] <= 10) & (sea_surge['station_y_coordinate'] >= 41) & (sea_surge['station_y_coordinate'] <= 51)]
                 france_df = france_df.rename(columns={france_df.columns[1]: 'lat', france_df.columns[2]: 'lon', france_df.columns[0]: 'surge'})
                 france_df.reset_index(drop=True, inplace=True)
@@ -576,7 +574,7 @@ if type2 == "Oui" :
 
                 # Projeter les géométries au CRS approprié avant d'appliquer un tampon
                 france_gdf = france_gdf.to_crs(epsg=32631)  # EPSG:32631 est un exemple, choisissez un CRS projeté approprié
-                france_gdf['geometry'] = france_gdf['geometry'].buffer(6000)  # tampon de 3000 mètres
+                france_gdf['geometry'] = france_gdf['geometry'].buffer(6000)  # tampon de 6000 mètres
 
                 # Re-projeter au CRS géographique après l'application du tampon
                 france_gdf = france_gdf.to_crs(epsg=4326)
@@ -589,15 +587,25 @@ if type2 == "Oui" :
                 indices_points_france = points_inside_france.index.tolist()
                 france_df_filtered = france_df.iloc[indices_points_france]
 
-
-
-
                 # Créer une carte folium
                 m = folium.Map(location=[46, 2], zoom_start=6)  # Coordonnées du centre de la France
                 norm = colors.Normalize(vmin=0, vmax=4)
                 cmap = cm.OrRd
 
-                # Dessiner des carrés pour représenter chaque raster avec une couleur relative au nombre de jours à risque d'incendie élevé
+                # Créer des polygones pour les carrés de submersion
+                rect_polygons = []
+                for _, row in france_df_filtered.iterrows():
+                    rect = Polygon([
+                        (row['lon'] - 0.07, row['lat'] - 0.05),
+                        (row['lon'] - 0.07, row['lat'] + 0.05),
+                        (row['lon'] + 0.07, row['lat'] + 0.05),
+                        (row['lon'] + 0.07, row['lat'] - 0.05)
+                    ])
+                    rect_polygons.append(rect)
+
+                rectangles_gdf = gpd.GeoDataFrame(geometry=rect_polygons, crs="EPSG:4326")
+
+                # Dessiner les carrés sur la carte folium
                 for _, row in france_df_filtered.iterrows():
                     color = colors.rgb2hex(cmap(norm(row['surge'])))
                     folium.Rectangle(
@@ -610,31 +618,31 @@ if type2 == "Oui" :
                         popup=str(row['surge'])
                     ).add_to(m)
 
-                data_used = pd.read_hdf(filename_hdf5, 'results_table', where=['siren = "{}"'.format(numero_siren)])            
+                # Charger les données des bâtiments de l'entreprise
+                data_used = pd.read_hdf(filename_hdf5, 'results_table', where=['siren = "{}"'.format(numero_siren)])
                 data_used['plg_code_commune'] = data_used['plg_code_commune'].astype(str)
-                data_used = pd.merge(data_used, df_lien, on="siret", how="inner" )
+                data_used = pd.merge(data_used, df_lien, on="siret", how="inner")
                 communes_jointure = pd.read_csv('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/communes_jointure_seis.csv', sep=',', low_memory=False)
-                resultat_used = pd.merge(data_used, communes_jointure, left_on='plg_code_commune',right_on='cod_commune', how='inner')
-                
-                # Historique catnat sur les communes concernées
-                histo_concat = pd.read_csv('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/histo_concat.csv')
-                
-                histo_concat = pd.merge(histo_concat,data_used, left_on='cod_commune', right_on='plg_code_commune', how='inner').dropna()
-                
-                histo_concat = histo_concat[['lib_commune','lib_risque_jo','y_latitude','x_longitude','dat_deb','dat_fin']]
-                
-                #Affichage des points
+                resultat_used = pd.merge(data_used, communes_jointure, left_on='plg_code_commune', right_on='cod_commune', how='inner')
+
+                # Créer un GeoDataFrame pour les bâtiments de l'entreprise
+                entreprise_points_gdf = gpd.GeoDataFrame(geometry=[Point(lon, lat) for lon, lat in zip(resultat_used['x_longitude'], resultat_used['y_latitude'])], crs="EPSG:4326")
+
+                # Effectuer la jointure spatiale pour compter les bâtiments dans les carrés
+                buildings_in_surge_areas = gpd.sjoin(entreprise_points_gdf, rectangles_gdf, how="inner", predicate='within')
+                num_buildings_in_surge_areas = len(buildings_in_surge_areas)
+
+                # Afficher les bâtiments sur la carte
                 for index, row in resultat_used.iterrows():
-                            folium.Circle([row['y_latitude'], row['x_longitude']], popup = row['lib_com']).add_to(m)
-                return(st.write("## Carte interactive"),folium_static(m), st.write("Historique"), st.write(histo_concat))
-                
-                
-                
-            surge = st.selectbox("Sélection de la période de retour:", ["Période de retour 1 an", "Période de retour 5 ans", "Période de retour 10 ans","Période de retour 25 ans","Période de retour 50 ans","Période de retour 100 ans"])
+                    folium.Circle([row['y_latitude'], row['x_longitude']], popup=row['lib_com'], color='blue', radius=10).add_to(m)
+
+                return (st.write(f"## Carte interactive avec {num_buildings_in_surge_areas} bâtiments dans les zones de submersion"), folium_static(m))
+
+            surge = st.selectbox("Sélection de la période de retour:", ["Période de retour 1 an", "Période de retour 5 ans", "Période de retour 10 ans", "Période de retour 25 ans", "Période de retour 50 ans", "Période de retour 100 ans"])
             numero_siren = st.text_input("numéro SIREN (format XXXXXXXXX):")
-    
+
             if st.button("Submit"):
-                map_prev_sub(surge,numero_siren)
+                map_prev_sub(surge, numero_siren)
         
 
             
