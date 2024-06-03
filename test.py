@@ -460,7 +460,7 @@ if type2 == "Oui" :
                 france_df.reset_index(drop=True, inplace=True)
 
                 # Charger les données de contours géographiques de la France
-                france_gdf = gpd.read_file('C:/Users/antoine.chapron_adwa/Documents/geoloc_sites/france-detailed-boundary_911.geojson')
+                france_gdf = gpd.read_file('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/france-detailed-boundary_911.geojson')
 
                 # Projeter les géométries au CRS approprié avant d'appliquer un tampon
                 france_gdf = france_gdf.to_crs(epsg=32631)  # EPSG:32631 est un exemple, choisissez un CRS projeté approprié
