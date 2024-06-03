@@ -6,7 +6,7 @@ import pandas as pd
 from streamlit_folium import folium_static
 import urllib.request
 from geopy.geocoders import BANFrance
-from shapely.geometry import Point
+from shapely.geometry import Point, Polygon
 import numpy as np 
 import matplotlib.cm as cm
 import matplotlib.colors as colors
