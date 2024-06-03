@@ -454,8 +454,8 @@ if type2 == "Oui" :
                 if surge == "Période de retour 100 ans":
                     sea_surge = pd.read_csv('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/sea_level_data/surgerp100.csv', sep=',', low_memory=False)
 
-                test_df = sea_surge.to_dataframe()
-                france_df = test_df[(test_df['station_x_coordinate'] >= -5) & (test_df['station_x_coordinate'] <= 10) & (test_df['station_y_coordinate'] >= 41) & (test_df['station_y_coordinate'] <= 51)]
+                
+                france_df = sea_surge[(sea_surge['station_x_coordinate'] >= -5) & (sea_surge['station_x_coordinate'] <= 10) & (sea_surge['station_y_coordinate'] >= 41) & (sea_surge['station_y_coordinate'] <= 51)]
                 france_df = france_df.rename(columns={france_df.columns[1]: 'lat', france_df.columns[2]: 'lon', france_df.columns[0]: 'surge'})
                 france_df.reset_index(drop=True, inplace=True)
 
