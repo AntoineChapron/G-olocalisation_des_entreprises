@@ -636,8 +636,7 @@ if type2 == "Oui" :
             if st.button("Submit"):
                 map_prev_sub(surge,numero_siren)
         
-            if st.button("Submit"):
-                st.write("In progress")
+
             
 
         
