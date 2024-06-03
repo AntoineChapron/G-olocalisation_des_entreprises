@@ -443,17 +443,17 @@ if type2 == "Oui" :
             def map_prev_sub(surge, address):
                 # Charger les données de submersion marine
                 if surge == "Période de retour 1 an":
-                    sea_surge = xr.open_dataset('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/sea_level_data/surgerp1.nc')
+                    sea_surge = xr.open_dataset('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/sea_level_data/surgerp1.nc', engine='netcdf4')
                 if surge == "Période de retour 5 ans":
-                    sea_surge = xr.open_dataset('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/sea_level_data/surgerp5.nc')
+                    sea_surge = xr.open_dataset('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/sea_level_data/surgerp5.nc', engine='netcdf4')
                 if surge == "Période de retour 10 ans":
-                    sea_surge = xr.open_dataset('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/sea_level_data/surgerp10.nc')
+                    sea_surge = xr.open_dataset('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/sea_level_data/surgerp10.nc', engine='netcdf4')
                 if surge == "Période de retour 25 ans":
-                    sea_surge = xr.open_dataset('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/sea_level_data/surgerp25.nc')
+                    sea_surge = xr.open_dataset('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/sea_level_data/surgerp25.nc', engine='netcdf4')
                 if surge == "Période de retour 50 ans":
-                    sea_surge = xr.open_dataset('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/sea_level_data/surgerp50.nc')
+                    sea_surge = xr.open_dataset('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/sea_level_data/surgerp50.nc', engine='netcdf4')
                 if surge == "Période de retour 100 ans":
-                    sea_surge = xr.open_dataset('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/sea_level_data/surgerp100.nc')
+                    sea_surge = xr.open_dataset('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/sea_level_data/surgerp100.nc', engine='netcdf4')
 
                 test_df = sea_surge.to_dataframe()
                 france_df = test_df[(test_df['station_x_coordinate'] >= -5) & (test_df['station_x_coordinate'] <= 10) & (test_df['station_y_coordinate'] >= 41) & (test_df['station_y_coordinate'] <= 51)]
