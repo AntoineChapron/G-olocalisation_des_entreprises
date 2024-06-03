@@ -3,6 +3,7 @@ folium==0.15.1
 geopandas==0.14.3
 geopy==2.4.1
 matplotlib==3.8.2
+netCDF4==1.6.5
 numpy==1.26.4
 pandas==2.2.2
 Requests==2.31.0
