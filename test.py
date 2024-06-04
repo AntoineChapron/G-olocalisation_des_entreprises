@@ -604,7 +604,7 @@ if type2 == "Oui" :
                     rect_polygons.append(rect)
 
                 rectangles_gdf = gpd.GeoDataFrame(geometry=rect_polygons, crs="EPSG:4326")
-                rectangles_gdf['surge'] = france_df_filtered['surge']
+                #rectangles_gdf['surge'] = france_df_filtered['surge']
                 # Dessiner les carrés sur la carte folium
                 for _, row in france_df_filtered.iterrows():
                     color = colors.rgb2hex(cmap(norm(row['surge'])))
@@ -640,20 +640,24 @@ if type2 == "Oui" :
                 num_buildings_in_surge_areas = len(buildings_in_surge_areas)
 
                 # Effectuer la jointure spatiale pour récupérer les valeurs de submersion pour chaque bâtiment
-                buildings_with_surge_values = gpd.sjoin(entreprise_points_gdf, rectangles_gdf, how="inner", predicate='within')
+                #buildings_with_surge_values = gpd.sjoin(entreprise_points_gdf, rectangles_gdf, how="inner", predicate='within')
 
                 # Calculer la moyenne des valeurs de submersion pour chaque bâtiment
-                avg_surge_values_per_building = buildings_with_surge_values.groupby('index_right')['surge']
+                #avg_surge_values_per_building = buildings_with_surge_values.groupby('index_right')['surge']
 
                 # Ajouter une colonne 'avg_surge_value' aux données des bâtiments
-                resultat_used['avg_surge_value'] = resultat_used.index.map(avg_surge_values_per_building)
+                #resultat_used['avg_surge_value'] = resultat_used.index.map(avg_surge_values_per_building)
 
                 # Afficher les bâtiments sur la carte avec la moyenne des valeurs de submersion
+                #for index, row in resultat_used.iterrows():
+                #    folium.Circle([row['y_latitude'], row['x_longitude']], popup=f"Commune: {row['lib_com']}, Moyenne submersion: {row['avg_surge_value']:.2f}", color='blue', radius=10).add_to(m)
+                
+                #Affichage des points
                 for index, row in resultat_used.iterrows():
-                    folium.Circle([row['y_latitude'], row['x_longitude']], popup=f"Commune: {row['lib_com']}, Moyenne submersion: {row['avg_surge_value']:.2f}", color='blue', radius=10).add_to(m)
-
+                            folium.Circle([row['y_latitude'], row['x_longitude']], popup = row['lib_com'], color='blue', radius=10).add_to(m)
+                            
                 # Calculer la moyenne globale des valeurs de submersion des bâtiments
-                global_avg_surge_value = resultat_used['avg_surge_value'].mean()
+                #global_avg_surge_value = resultat_used['avg_surge_value'].mean()
 
                 return (st.write("## Carte interactive"),folium_static(m),st.write(f"Il y a {num_buildings_in_surge_areas} bâtiments dans les zones de submersion."),st.write(f"Moyenne globale des valeurs de submersion des bâtiments : {global_avg_surge_value:.2f}"), st.write("Historique"), st.write(histo_concat))
 
