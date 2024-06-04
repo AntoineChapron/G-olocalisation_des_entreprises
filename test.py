@@ -659,7 +659,7 @@ if type2 == "Oui" :
                 # Calculer la moyenne globale des valeurs de submersion des bâtiments
                 #global_avg_surge_value = resultat_used['avg_surge_value'].mean()
 
-                return (st.write("## Carte interactive"),folium_static(m),st.write(f"Il y a {num_buildings_in_surge_areas} bâtiments dans les zones de submersion."),st.write(f"Moyenne globale des valeurs de submersion des bâtiments : {global_avg_surge_value:.2f}"), st.write("Historique"), st.write(histo_concat))
+                return (st.write("## Carte interactive"),folium_static(m),st.write(f"Il y a {num_buildings_in_surge_areas} bâtiments dans les zones de submersion."), st.write("Historique"), st.write(histo_concat))
 
             surge = st.selectbox("Sélection de la période de retour:", ["Période de retour 1 an", "Période de retour 5 ans", "Période de retour 10 ans", "Période de retour 25 ans", "Période de retour 50 ans", "Période de retour 100 ans"])
             numero_siren = st.text_input("numéro SIREN (format XXXXXXXXX):")
