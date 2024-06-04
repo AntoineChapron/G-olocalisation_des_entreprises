@@ -238,7 +238,7 @@ if type2 == "Oui" :
     type3 = st.selectbox("Sélection du risque :", ["Incendies","Submersion"])
     if type3 == "Incendies" :
         st.write("Pour avoir des valeurs prédictives on utilise les données de la base Copernicus. Ici la variable représente le nombre de jours par année et par raster à risque d'incendie élevé. On propose à l'utilisateur de choisir parmi 3 différents scénarios RCP et parmi 2 valeurs (mean et worst case). Ces valeurs représentent respectivement la moyenne et le pire des cas calculés par une combinaison de différents modèles climatiques.")
-        st.write("Les 3 scénarios RCP (Representative Concentration Pathway) sont des scénarios de trajectoire du forçage radiatif jusqu'à l'horizon 2100. Ils permettent de modéliser le climat futur et représentent donc +2,6 W/m² pour le scénario RCP 2.6 et ainsi de suite. Ils sont des scénarios d’émission de gaz à effet de serre.")
+        st.write("Les 3 scénarios RCP (Representative Concentration Pathway) sont des scénarios de trajectoire du forçage radiatif jusqu'à l'horizon 2100. Ils permettent de modéliser le climat futur et représentent donc +2,6 W/m² pour le scénario RCP 2.6 et ainsi de suite. Ce sont des scénarios d’émission de gaz à effet de serre.")
         if type == "Particulier" : 
     
             def map_prev_inc(year, scenario, address):
