@@ -604,7 +604,7 @@ if type2 == "Oui" :
                     rect_polygons.append(rect)
 
                 rectangles_gdf = gpd.GeoDataFrame(geometry=rect_polygons, crs="EPSG:4326")
-
+                rectangles_gdf['surge'] = france_df_filtered['surge']
                 # Dessiner les carrés sur la carte folium
                 for _, row in france_df_filtered.iterrows():
                     color = colors.rgb2hex(cmap(norm(row['surge'])))
@@ -643,7 +643,7 @@ if type2 == "Oui" :
                 buildings_with_surge_values = gpd.sjoin(entreprise_points_gdf, rectangles_gdf, how="inner", predicate='within')
 
                 # Calculer la moyenne des valeurs de submersion pour chaque bâtiment
-                avg_surge_values_per_building = buildings_with_surge_values.groupby('index_right')['surge'].mean()
+                avg_surge_values_per_building = buildings_with_surge_values.groupby('index_right')['surge']
 
                 # Ajouter une colonne 'avg_surge_value' aux données des bâtiments
                 resultat_used['avg_surge_value'] = resultat_used.index.map(avg_surge_values_per_building)
