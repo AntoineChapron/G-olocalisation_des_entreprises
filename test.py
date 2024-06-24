@@ -409,7 +409,7 @@ if type2 == "Oui" :
                 data_used = pd.read_hdf(filename_hdf5, 'results_table', where=['siren = "{}"'.format(numero_siren)])            
                 data_used['plg_code_commune'] = data_used['plg_code_commune'].astype(str)
                 data_used = pd.merge(data_used, df_lien, on="siret", how="inner" )
-                communes_jointure = pd.read_csv('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/communes_jointure_seis.csv', sep=',', low_memory=False)
+                communes_jointure = pd.read_csv('https://github.com/AntoineChapron/G-olocalisation_des_entreprises/raw/main/histo_catnat/communes_jointure_seis.csv', sep=',', low_memory=False)
                 resultat_used = pd.merge(data_used, communes_jointure, left_on='plg_code_commune',right_on='cod_commune', how='inner')
                 
                 # Historique catnat sur les communes concernées
