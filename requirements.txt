@@ -1,4 +1,5 @@
 branca==0.7.0
+fiona==1.8.20
 folium==0.15.1
 geopandas==0.14.3
 geopy==2.4.1
